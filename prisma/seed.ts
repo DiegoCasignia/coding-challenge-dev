@@ -4,6 +4,24 @@ const prisma = new PrismaClient()
 
 async function main() {
   await prisma.ticket.deleteMany()
+  await prisma.user.deleteMany()
+
+  // Usuarios de prueba
+  await prisma.user.create({
+    data: {
+      email: 'usuario@techcorp.com',
+      name: 'Usuario TechCorp',
+      companyId: 'TechCorp',
+    },
+  })
+
+  await prisma.user.create({
+    data: {
+      email: 'usuario@orosi.com',
+      name: 'Usuario Orosi',
+      companyId: 'Orosi',
+    },
+  })
 
   // Tickets de TechCorp (Compañía actual del usuario en la simulación)
   await prisma.ticket.create({

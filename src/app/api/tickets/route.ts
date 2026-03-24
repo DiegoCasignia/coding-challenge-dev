@@ -1,14 +1,31 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+/* Simulación de sesión del usuario
+ * Correos disponibles: 
+ * - usuario@techcorp.com
+ * - usuario@orosi.com
+*/
+async function getCurrentUser() {
+  const user = await prisma.user.findUnique({
+    where: { email: 'usuario@techcorp.com' },
+  })
+  return user
+}
+
 export async function GET() {
   try {
-    // BUG 4 INTENCIONAL: Fuga de datos
-    // El usuario (simulado) pertenece a 'TechCorp', pero aquí traemos todos los tickets
-    // de la base de datos sin filtrar.
+    const currentUser = await getCurrentUser()
+
+    if (!currentUser) {
+      return NextResponse.json({ error: 'Usuario no autenticado' }, { status: 401 })
+    }
+
     const tickets = await prisma.ticket.findMany({
+      where: {
+        companyId: currentUser.companyId,
+      },
       orderBy: { createdAt: 'desc' },
-      // Falta: where: { companyId: 'TechCorp' } o usando el usuario de la sesión
     })
 
     return NextResponse.json(tickets)

@@ -7,6 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String @id @default(uuid())
+  email     String @unique
+  name      String
+  companyId String // TechCorp, Orosi, etc.
+}
+
 model Ticket {
   id          String   @id @default(uuid())
   title       String
